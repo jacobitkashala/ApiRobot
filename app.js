@@ -1,13 +1,16 @@
-import fetch from "node-fetch";
-import cors from "cors";
-import express from "express"
-import route from "./src/routes/robotRoute"
+// import fetch from "node-fetch";
+// import cors from "cors";
+// import express from "express"
+// import route from "./src/routes/robotRoute"
+const fetch = require("node-fetch");
+const cors = require("cors");
+const express  =require("express");
 const app = express();
 let robotDataAll = [{ image: "" }];
 let robotDataCurrent = [];
 
 app.use(express.json());
-route(app);
+// route(app);
 const PORT = process.env.PORT || 8800;
 
 
@@ -80,7 +83,7 @@ const toUpdataStudent = (reqtte, resp) => {
 app.get('/', (req, res) => {
     res
         .status(200)
-        .json({message:'API Robots'})
+        .json({ message: 'API Robots' })
 });
 app.get('/api/robots', (req, res) => {
     res

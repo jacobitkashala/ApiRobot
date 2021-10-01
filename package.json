@@ -4,7 +4,7 @@
     "description": "",
     "main": "app.js",
     "scripts": {
-        "start": "node app.js",
+        "start": "node app.js --exec babel-node -e js ",
         "startdemon": "nodemon ./app.js --exec babel-node -e js"
     },
     "keywords": [],
