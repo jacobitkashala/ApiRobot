@@ -1,10 +1,6 @@
-// import fetch from "node-fetch";
-// import cors from "cors";
-// import express from "express"
-// import route from "./src/routes/robotRoute"
 const fetch = require("node-fetch");
 const cors = require("cors");
-const express  =require("express");
+const express = require("express");
 const app = express();
 let robotDataAll = [{ image: "" }];
 let robotDataCurrent = [];
@@ -22,7 +18,7 @@ const PORT = process.env.PORT || 8800;
         .then(robotsInfo => {
             for (const index in robotsInfo) {
                 robotDataAll = [...robotsInfo];
-                robotDataAll[index].image = "https://robohash.org/" + index;
+                robotDataAll[index].image = "https://robohash.org/" +index;
             };
             robotDataCurrent = [...robotDataAll]
         })
@@ -38,6 +34,7 @@ const toCheckValue = (reqtte) => {
 
 const toDeleteStudent = (req, resp) => {
     const { id } = req.params;
+    console.log(id);
     const studentIdFound = students.some(Robot => Robot.id === parseInt(id))
     if (studentIdFound) {
         const studentsUpdate = filterBD(id);
@@ -90,17 +87,19 @@ app.get('/api/robots', (req, res) => {
         .status(200)
         .json(robotDataCurrent)
 });
-app.get("/api/robot-users/:id", (req, res) => {
+app.get("/api/robot/:id", (req, res) => {
     const { id } = req.params
-    const studentIdFound = robotDataCurrent.some(robot => robot.id === parseInt(id))
-    if (studentIdFound) {
-        const robot = students.find((student) => student.id == id);
+    const robotIdFound = robotDataCurrent.some(robot => robot.id === parseInt(id))
+    if (robotIdFound) {
+        const robot = robotDataCurrent.find((student) => student.id === parseInt(id));
+        res
+            .status(200)
+            .json(robot);
     } else {
-        //  resp.status(404).json({ error: `No student id ${id}` })
-
-        res.send("<h1>404 error</h1>");
+        res
+            .status(200)
+            .json({ message: 'le robot n est pas trouvé' });
     }
-    resp.json(robot);
 })
 
 
