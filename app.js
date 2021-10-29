@@ -1,7 +1,9 @@
 const fetch = require("node-fetch");
+const { check, oneOf, validationResult } = require('express-validator');
 const cors = require("cors");
 const express = require("express");
 const app = express();
+
 let robotDataAll = [{ image: "" }];
 let robotDataCurrent = [];
 
@@ -18,7 +20,7 @@ const PORT = process.env.PORT || 8800;
         .then(robotsInfo => {
             for (const index in robotsInfo) {
                 robotDataAll = [...robotsInfo];
-                robotDataAll[index].image = "https://robohash.org/" +index;
+                robotDataAll[index].image = "https://robohash.org/" + index;
             };
             robotDataCurrent = [...robotDataAll]
         })
@@ -27,6 +29,7 @@ const PORT = process.env.PORT || 8800;
 
 const toCheckValue = (reqtte) => {
     const { nom, prenom } = reqtte.body
+
     if (nom === "" || prenom === "") {
         return false
     } else return true
@@ -101,6 +104,55 @@ app.get("/api/robot/:id", (req, res) => {
             .json({ message: 'le robot n est pas trouvé' });
     }
 })
+
+app.post("/api/robot",
+    check('name').isAlpha(),
+    check('name').exists(),
+    check('username').isAlpha(),
+    check('username').exists(),
+    check('email').exists(),
+    check('email').isEmail(),
+
+    (req, res) => {
+        const newRobot = {};
+
+        try {
+            validationResult(req).throw();
+            const { name, username, email } = req.body;
+            // console.log(name, username, email);
+            newRobot.name = name;
+            newRobot.username = username;
+            newRobot.email = email;
+            newRobot.id = robotDataCurrent.length;
+            newRobot.address = {
+                "street": "Dayna Park",
+                "suite": "Suite 449",
+                "city": "Bartholomebury",
+                "zipcode": "76495-3109",
+                "geo": {
+                    "lat": "24.6463",
+                    "lng": "-168.8889"
+                }
+            };
+            newRobot.phone = "(775)976-6794 x41206";
+            newRobot.website = "conrad.com";
+            newRobot.company = {
+                "name": "Yost and Sons",
+                "catchPhrase": "Switchable contextually-based project",
+                "bs": "aggregate real-time technologies"
+            };
+            newRobot.image = "https://robohash.org/" + robotDataCurrent.length;
+
+            robotDataCurrent.push(newRobot);
+
+            res
+                .status(200)
+                .json(robotDataCurrent.reverse());
+
+        } catch (err) {
+            res.status(400).json(err);
+        }
+    })
 
 
 app.listen(PORT, () => {
