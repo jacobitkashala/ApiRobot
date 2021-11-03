@@ -7,6 +7,19 @@ const app = express();
 let robotDataAll = [{ image: "" }];
 let robotDataCurrent = [];
 
+app.use(Cors({
+    origin: ["http://localhost:3000"],
+    method: ["GET", "PUT", "POST", "DELETE"],
+    Credential: true
+}))
+
+app.use((req, resp, next) => {
+    resp.setHeader('Access-Control-Allow-Origin', '*');
+    resp.setHeader('Access-Control-Allow-Methods', 'OPTOINS, GET, POST, DELETE, PUT');
+    resp.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
+
 app.use(express.json());
 // route(app);
 const PORT = process.env.PORT || 8800;
