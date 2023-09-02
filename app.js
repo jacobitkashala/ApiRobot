@@ -1,8 +1,17 @@
 const fetch = require("node-fetch");
 const { check, oneOf, validationResult } = require('express-validator');
-const cors = require("cors");
+const Cors = require("cors");
 const express = require("express");
 const app = express();
+
+const corsOptions = {
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "credentials": true,
+  "optionSuccessStatus": 200,
+};
+
+app.use(Cors(corsOptions));
 
 let robotDataAll = [{ image: "" }];
 let robotDataCurrent = [];
@@ -152,8 +161,32 @@ app.post("/api/robot",
         } catch (err) {
             res.status(400).json(err);
         }
-    })
+})
 
+app.post("/api/robot/login",
+    check('password').exists(),
+    check('identifier').exists(),
+    check('identifier').isEmail(),
+
+    (req, res) => {
+        const newRobot = {};
+
+        try {
+            validationResult(req).throw();
+            const {  identifier, password } = req.body;
+            console.log(identifier, password);
+            newRobot.password = password;
+            newRobot.email = identifier;
+            newRobot.id = robotDataCurrent.length;
+
+            res
+                .status(200)
+                .json(newRobot);
+
+        } catch (err) {
+            res.status(400).json(err);
+        }
+})
 
 app.listen(PORT, () => {
     console.log(`Our server is listening on the ${PORT} port`);
